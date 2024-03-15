@@ -4,7 +4,7 @@
     <el-select
       :model-value="modelValue"
       :multiple="multiple"
-      class="m-2"
+      :class="className"
       placeholder=""
       size="large"
       @update:modelValue="$emit('update:modelValue', $event)"
@@ -16,25 +16,32 @@
         :value="item.value"
       />
     </el-select>
+    <span v-if="hasError" class="error-text">{{hasError}}</span>
   </div>
 </template>
 
 <script setup lang="ts">
-import { withDefaults, defineProps } from 'vue'
+import { withDefaults, defineProps, ComputedRef, computed } from 'vue'
 
 interface Props {
-  modelValue: string | string[]
-  title: string
-  options: Record<string, string>[]
-  multiple?: boolean
+  modelValue: string | string[] | boolean,
+  title: string,
+  options: Record<string, unknown>[],
+  multiple?: boolean,
+  hasError?: string,
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
   title: '',
   options: () => [],
   multiple: false,
-})
+  hasError: '',
+});
+
+const className: ComputedRef<string> = computed(() =>
+    `${props.hasError ? 'error' : ''}`
+);
 </script>
 
 <style scoped>
@@ -45,5 +52,14 @@ withDefaults(defineProps<Props>(), {
 
 :deep(.el-select__wrapper):focus {
   border: 1px solid var(--color-red);
+}
+
+:deep(.error .el-select__wrapper) {
+  border: 1px solid var(--color-red);
+}
+
+.error-text {
+  color: var(--color-red);
+  font-size: 12px;
 }
 </style>

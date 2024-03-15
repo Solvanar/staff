@@ -5,43 +5,76 @@
       <BasePhotoUpload v-model="form.photo" />
     </div>
     <div class="form-row">
-      <BaseInput v-model="form.secondName" :title="'Фамилия'" />
-      <BaseInput v-model="form.firstName" :title="'Имя'" />
+      <BaseInput v-model="form.secondName" :title="'Фамилия'" :has-error="getError('secondName')" />
+      <BaseInput v-model="form.firstName" :title="'Имя'" :has-error="getError('firstName')" />
     </div>
     <div class="form-row">
-      <BaseSelect v-model="form.status" :options="statusOptions" :title="'Статус'" />
+      <BaseSelect
+          v-model="form.isMarried"
+          :options="profileOptions.isMarried"
+          :title="'Статус'"
+          :has-error="getError('isMarried')"
+      />
     </div>
     <div class="form-row">
-      <BaseDatePicker v-model="form.birthday" :title="'День рождения'" />
+      <BaseDatePicker
+          v-model="form.birthday"
+          :title="'День рождения'"
+          :has-error="getError('birthday')"
+      />
     </div>
     <div class="form-row">
-      <BaseSelect v-model="form.citizenship" :options="citizenshipOptions" :title="'Гражданство'" />
+      <BaseSelect
+          v-model="form.citizenship"
+          :options="profileOptions.citizenship"
+          :title="'Гражданство'"
+          :has-error="getError('citizenship')"
+      />
     </div>
     <div class="form-row">
       <BaseSelect
         v-model="form.readyToGo"
-        :options="readyToGoOptions"
+        :options="profileOptions.readyToGo"
         :title="'Готовность приехать'"
+        :has-error="getError('readyToGo')"
       />
     </div>
     <div class="form-row">
       <BaseSelect
         v-model="form.speciality"
         :multiple="true"
-        :options="specialityOptions"
+        :options="profileOptions.speciality"
         :title="'Основная специальность'"
+        :has-error="getError('speciality')"
       />
     </div>
     <div class="form-row">
       <BaseSwitch v-model="form.isSlinger" :title="'Стропальщик'" />
     </div>
     <div class="form-row">
-      <BaseInput v-model="form.wishedSalary" :title="'Желаемая заработная плата'" />
-      <BaseInput v-model="form.wishedHourlyRate" :title="'Желаемая часовая ставка'" />
+      <BaseInput
+          v-model="form.wishedSalary"
+          :title="'Желаемая заработная плата'"
+          :has-error="getError('wishedSalary')"
+      />
+      <BaseInput
+          v-model="form.wishedHourlyRate"
+          :title="'Желаемая часовая ставка'"
+          :has-error="getError('wishedHourlyRate')"
+      />
     </div>
     <div class="form-row">
-      <BaseSelect v-model="form.schedule" :options="scheduleOptions" :title="'График работы'" />
-      <BaseInput v-model="form.wishedHourlyProduction" :title="'Желаемая выработка часов'" />
+      <BaseSelect
+          v-model="form.schedule"
+          :options="profileOptions.schedule"
+          :title="'График работы'"
+          :has-error="getError('schedule')"
+      />
+      <BaseInput
+          v-model="form.wishedHourlyProduction"
+          :title="'Желаемая выработка часов'"
+          :has-error="getError('wishedHourlyProduction')"
+      />
     </div>
     <div class="form-row">
       <BaseTextarea v-model="form.about" :title="'О себе'" />
@@ -62,72 +95,46 @@ import BaseDatePicker from '@/components/Base/BaseDatePicker.vue'
 import BaseTextarea from '@/components/Base/BaseTextarea.vue'
 import BasePhotoMimic from '@/components/Base/BasePhotoMimic.vue'
 import BasePhotoUpload from '@/components/Base/BasePhotoUpload.vue'
+import { ref } from 'vue'
+import { z } from 'zod';
+import { VALIDATION_ERRORS } from '@/constants/errors';
+import { profileOptions } from '@/constants/dictionary';
 
-import { reactive } from 'vue'
+import useValidation from '@/composables/useValidation';
 
-const statusOptions = [
-  {
-    value: 'married',
-    title: 'Женат',
-  },
-  {
-    value: 'single',
-    title: 'Не женат',
-  },
-];
+const specialitySchema = z
+    .string()
+    .array()
+    .nonempty({ message: VALIDATION_ERRORS.required });
 
-const readyToGoOptions = [
-  {
-    value: 'yes',
-    title: 'Да',
-  },
-  {
-    value: 'no',
-    title: 'Нет',
-  },
-];
+const validationSchema = z.object({
+  firstName: z.string().min(1, VALIDATION_ERRORS.required),
+  secondName: z.string().min(1, VALIDATION_ERRORS.required),
+  isMarried: z.boolean({ required_error: VALIDATION_ERRORS.required }),
+  birthday: z.coerce.date({
+    errorMap: () => ({
+      message: VALIDATION_ERRORS.invalidDate
+    }),
+  }),
+  citizenship: z.string().min(1, VALIDATION_ERRORS.required),
+  readyToGo: z.boolean({ required_error: VALIDATION_ERRORS.required }),
+  speciality: specialitySchema,
+  isSlinger: z.boolean({ required_error: VALIDATION_ERRORS.required }),
+  wishedSalary: z.coerce.number().gt(0, VALIDATION_ERRORS.required),
+  wishedHourlyRate: z.coerce.number().gt(0, VALIDATION_ERRORS.required),
+  schedule: z.string().min(1, VALIDATION_ERRORS.required),
+  wishedHourlyProduction: z.coerce.number().gt(0, VALIDATION_ERRORS.required),
+  about: z.string(),
+});
 
-const citizenshipOptions = [
-  {
-    value: 'russia',
-    title: 'РФ',
-  },
-  {
-    value: 'cis',
-    title: 'СНГ',
-  },
-];
-
-const specialityOptions = [
-  {
-    value: 'concrete_worker',
-    title: 'Бетонщик',
-  },
-  {
-    value: 'painter',
-    title: 'Маляр',
-  },
-];
-
-const scheduleOptions = [
-  {
-    value: '2/2',
-    title: '2/2',
-  },
-  {
-    value: '4/2',
-    title: '4/2',
-  },
-]
-
-const form = reactive({
+const form = ref({
   photo: '',
   firstName: '',
   secondName: '',
-  status: '',
+  isMarried: false,
   birthday: '',
   citizenship: '',
-  readyToGo: '',
+  readyToGo: false,
   speciality: [],
   isSlinger: false,
   wishedSalary: '',
@@ -137,8 +144,10 @@ const form = reactive({
   about: '',
 })
 
-const submit = () => {
-  console.log(form)
+const { validate, getError } = useValidation(validationSchema, form);
+
+const submit = async () => {
+  await validate();
 }
 </script>
 
@@ -165,6 +174,10 @@ const submit = () => {
 
   .form-buttons {
     display: flex;
+    position: sticky;
+    bottom: 0;
+    background-color: var(--color-white);
+    padding: 15px;
     gap: var(--indent);
     justify-content: right;
     width: 100%;

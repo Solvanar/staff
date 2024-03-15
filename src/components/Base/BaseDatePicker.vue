@@ -3,26 +3,34 @@
     <label :for="title">{{ title }}</label>
     <el-date-picker
       :format="'DD.MM.YYYY'"
-      :modelValue="modelValue"
+      :model-value="modelValue"
       :name="title"
+      :class="className"
       type="date"
-      @update:modelValue="$emit('update:modelValue', $event)"
+      @update:model-value="$emit('update:modelValue', $event)"
     />
+    <span v-if="hasError" class="error-text">{{ hasError }}</span>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { withDefaults, defineProps } from 'vue'
+import { withDefaults, defineProps, ComputedRef, computed } from 'vue'
 
 interface Props {
-  modelValue: string
-  title: string
+  modelValue: Date | string,
+  title: string,
+  hasError: string,
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
   title: '',
-})
+  hasError: '',
+});
+
+const className: ComputedRef<string> = computed(() =>
+    `${props.hasError ? 'error' : ''}`
+);
 </script>
 
 <style scoped>
@@ -32,6 +40,7 @@ withDefaults(defineProps<Props>(), {
 
 :deep(.el-date-editor) {
   display: block;
+  height: 40px;
   width: 100%;
 }
 
@@ -41,5 +50,14 @@ withDefaults(defineProps<Props>(), {
   box-sizing: border-box;
   height: 40px;
   width: 100%;
+}
+
+:deep(.error .el-input__wrapper) {
+  border: 1px solid var(--color-red);
+}
+
+.error-text {
+  color: var(--color-red);
+  font-size: 12px;
 }
 </style>

@@ -23,18 +23,20 @@ const router = useRouter()
 const currentRoute = useRoute()
 
 const routes = router.options.routes.reduce((accumulator, currentValue) => {
-  if (!currentValue.meta.type) {
+  if (!currentValue.meta || !currentValue.meta.type) {
     return accumulator
   }
 
-  if (!accumulator[currentValue.meta.type]) {
-    accumulator[currentValue.meta.type] = {
-      id: currentValue.meta.type,
+  const type = currentValue.meta?.type.toString();
+
+  if (!accumulator[type]) {
+    accumulator[type] = {
+      id: type,
       data: [],
     }
   }
 
-  accumulator[currentValue.meta.type].data.push(currentValue)
+  accumulator[type].data.push(currentValue)
   return accumulator
 }, {})
 </script>
