@@ -23,6 +23,7 @@ withDefaults(defineProps<Props>(), {
   color: var(--color-gray-light);
   font-weight: var(--font-weight-bold);
   text-align: center;
+  width: 150px;
 }
 
 .sm {

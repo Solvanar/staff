@@ -1,85 +1,70 @@
 <template>
   <div class="form">
-    <BasePhotoMimic :size="'lg'" />
-    <div>
-      <BasePhotoUpload v-model="form.photo" />
+    <div class="full-width center">
+      <BasePhotoMimic :size="'lg'"/>
     </div>
-    <div class="form-row">
-      <BaseInput v-model="form.secondName" :title="'Фамилия'" :has-error="getError('secondName')" />
-      <BaseInput v-model="form.firstName" :title="'Имя'" :has-error="getError('firstName')" />
-    </div>
-    <div class="form-row">
-      <BaseSelect
-          v-model="form.isMarried"
-          :options="profileOptions.isMarried"
-          :title="'Статус'"
-          :has-error="getError('isMarried')"
-      />
-    </div>
-    <div class="form-row">
-      <BaseDatePicker
-          v-model="form.birthday"
-          :title="'День рождения'"
-          :has-error="getError('birthday')"
-      />
-    </div>
-    <div class="form-row">
-      <BaseSelect
-          v-model="form.citizenship"
-          :options="profileOptions.citizenship"
-          :title="'Гражданство'"
-          :has-error="getError('citizenship')"
-      />
-    </div>
-    <div class="form-row">
-      <BaseSelect
-        v-model="form.readyToGo"
-        :options="profileOptions.readyToGo"
-        :title="'Готовность приехать'"
-        :has-error="getError('readyToGo')"
-      />
-    </div>
-    <div class="form-row">
-      <BaseSelect
-        v-model="form.speciality"
-        :multiple="true"
-        :options="profileOptions.speciality"
-        :title="'Основная специальность'"
-        :has-error="getError('speciality')"
-      />
-    </div>
-    <div class="form-row">
-      <BaseSwitch v-model="form.isSlinger" :title="'Стропальщик'" />
-    </div>
-    <div class="form-row">
-      <BaseInput
-          v-model="form.wishedSalary"
-          :title="'Желаемая заработная плата'"
-          :has-error="getError('wishedSalary')"
-      />
-      <BaseInput
-          v-model="form.wishedHourlyRate"
-          :title="'Желаемая часовая ставка'"
-          :has-error="getError('wishedHourlyRate')"
-      />
-    </div>
-    <div class="form-row">
-      <BaseSelect
-          v-model="form.schedule"
-          :options="profileOptions.schedule"
-          :title="'График работы'"
-          :has-error="getError('schedule')"
-      />
-      <BaseInput
-          v-model="form.wishedHourlyProduction"
-          :title="'Желаемая выработка часов'"
-          :has-error="getError('wishedHourlyProduction')"
-      />
-    </div>
-    <div class="form-row">
-      <BaseTextarea v-model="form.about" :title="'О себе'" />
-    </div>
-    <div class="form-buttons">
+    <BasePhotoUpload v-model="form.photo" class="full-width" />
+    <BaseInput v-model="form.secondName" :title="'Фамилия'" :has-error="getError('secondName')" />
+    <BaseInput v-model="form.firstName" :title="'Имя'" :has-error="getError('firstName')" />
+    <BaseSelect
+        v-model="form.isMarried"
+        :options="profileOptions.isMarried"
+        :title="'Статус'"
+        :has-error="getError('isMarried')"
+        class="full-width"
+    />
+    <BaseDatePicker
+        v-model="form.birthday"
+        :title="'День рождения'"
+        :has-error="getError('birthday')"
+        class="full-width"
+    />
+    <BaseSelect
+        v-model="form.citizenship"
+        :options="profileOptions.citizenship"
+        :title="'Гражданство'"
+        :has-error="getError('citizenship')"
+        class="full-width"
+    />
+    <BaseSelect
+      v-model="form.readyToGo"
+      :options="profileOptions.readyToGo"
+      :title="'Готовность приехать'"
+      :has-error="getError('readyToGo')"
+      class="full-width"
+    />
+    <BaseSelect
+      v-model="form.speciality"
+      :multiple="true"
+      :options="profileOptions.speciality"
+      :title="'Основная специальность'"
+      :has-error="getError('speciality')"
+      class="full-width"
+    />
+    <BaseSwitch v-model="form.isSlinger" :title="'Стропальщик'" class="full-width" />
+    <BaseInput
+        v-model="form.wishedSalary"
+        :title="'Желаемая заработная плата'"
+        :has-error="getError('wishedSalary')"
+    />
+    <BaseInput
+        v-model="form.wishedHourlyRate"
+        :title="'Желаемая часовая ставка'"
+        :has-error="getError('wishedHourlyRate')"
+    />
+    <BaseSelect
+        v-model="form.schedule"
+        :options="profileOptions.schedule"
+        :title="'График работы'"
+        :has-error="getError('schedule')"
+    />
+    <BaseInput
+        v-model="form.wishedHourlyProduction"
+        :title="'Желаемая выработка часов'"
+        :has-error="getError('wishedHourlyProduction')"
+    />
+    <BaseTextarea v-model="form.about" :title="'О себе'" class="full-width" />
+    <div class="form-buttons full-width">
       <BaseButton>Отмена</BaseButton>
       <BaseButton :style="'danger'" @click="submit">Сохранить</BaseButton>
     </div>
@@ -153,23 +138,24 @@ const submit = async () => {
 
 <style scoped>
 .form {
-  align-items: center;
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--indent) / 2);
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: calc(var(--indent) / 2);
   padding: var(--indent);
+  padding-bottom: 0;
   width: 100%;
 
-  .form-row {
-    display: flex;
-    gap: var(--indent);
-    width: 100%;
+  & > div {
+    width: auto;
+  }
 
-    div {
-      flex-basis: 100%;
-    }
+  .full-width {
+    grid-column: 1 / 3;
+  }
+
+  .center {
+    justify-self: center;
   }
 
   .form-buttons {
@@ -177,10 +163,10 @@ const submit = async () => {
     position: sticky;
     bottom: 0;
     background-color: var(--color-white);
-    padding: 15px;
+    padding: var(--indent) 0;
     gap: var(--indent);
     justify-content: right;
-    width: 100%;
+    width: auto;
   }
 }
 </style>
